@@ -1,0 +1,53 @@
+# ── Go ────────────────────────────────────────────────────────────────────────
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+backend/gen/
+
+# ── Flutter / Dart ────────────────────────────────────────────────────────────
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/build/
+frontend/.pub-cache/
+frontend/.pub/
+frontend/ios/.generated/
+frontend/android/.gradle/
+frontend/android/local.properties
+frontend/android/key.properties
+*.g.dart
+*.freezed.dart
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.dockerignore
+
+# ── Kubernetes secrets (never commit these) ───────────────────────────────────
+k8s/secrets/
+*.secret.yaml
+
+# ── k6 test results ───────────────────────────────────────────────────────────
+tests/load/results/*.json
+!tests/load/results/README.md
+
+# ── IDE / OS ─────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+
+# ── Google Cloud ─────────────────────────────────────────────────────────────
+*.json
+!frontend/web/manifest.json
+service-account-key.json
+gcloud-credentials.json
