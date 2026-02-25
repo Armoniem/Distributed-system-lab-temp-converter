@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package tempconv;
+
+option go_package = "github.com/yourusername/tempconv/backend/gen/tempconv";
+
+// TempConverter service exposes temperature conversion RPCs.
+service TempConverter {
+  // CelsiusToFahrenheit converts a Celsius value to Fahrenheit.
+  rpc CelsiusToFahrenheit(ConversionRequest) returns (ConversionResponse);
+
+  // FahrenheitToCelsius converts a Fahrenheit value to Celsius.
+  rpc FahrenheitToCelsius(ConversionRequest) returns (ConversionResponse);
+}
+
+// ConversionRequest carries the input temperature value.
+message ConversionRequest {
+  double value = 1; // Input temperature value
+}
+
+// ConversionResponse carries the converted temperature value and a human-readable label.
+message ConversionResponse {
+  double result     = 1; // Converted temperature value
+  string unit       = 2; // Unit of the result ("Fahrenheit" or "Celsius")
+  string formula    = 3; // Formula used, e.g. "(°C × 9/5) + 32 = °F"
+}
