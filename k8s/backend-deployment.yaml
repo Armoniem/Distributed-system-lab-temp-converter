@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempconv-backend
+  namespace: default
+  labels:
+    app: tempconv-backend
+    version: "1.0.0"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tempconv-backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: tempconv-backend
+        version: "1.0.0"
+    spec:
+      # GKE nodes are amd64
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: backend
+          # Replace with your actual Artifact Registry path
+          image: REGION-docker.pkg.dev/PROJECT_ID/tempconv/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: GRPC_PORT
+              value: "50051"
+            - name: HTTP_PORT
+              value: "8080"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /tempconv.TempConverter/CelsiusToFahrenheit
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /tempconv.TempConverter/CelsiusToFahrenheit
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+      securityContext:
+        fsGroup: 65532

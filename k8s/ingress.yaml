@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tempconv-ingress
+  namespace: default
+  annotations:
+    # Use GKE Ingress controller (default in GKE)
+    kubernetes.io/ingress.class: "gce"
+    # Uncomment below to use a static IP (create it first: gcloud compute addresses create tempconv-ip --global)
+    # kubernetes.io/ingress.global-static-ip-name: "tempconv-ip"
+
+    # Enable HTTPS managed certificate (replace with your domain)
+    # networking.gke.io/managed-certificates: tempconv-cert
+
+    # HTTP → HTTPS redirect
+    # kubernetes.io/ingress.allow-http: "false"
+spec:
+  rules:
+    # Replace YOUR_DOMAIN with your actual domain (or remove host and use IP)
+    # - host: tempconv.yourdomain.com
+    - http:
+        paths:
+          # Frontend — served at /
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tempconv-frontend
+                port:
+                  number: 80
+          # Backend HTTP gateway — served at /tempconv.TempConverter/
+          - path: /tempconv.TempConverter
+            pathType: Prefix
+            backend:
+              service:
+                name: tempconv-backend
+                port:
+                  number: 8080

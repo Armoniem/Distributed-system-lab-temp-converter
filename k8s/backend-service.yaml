@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempconv-backend
+  namespace: default
+  labels:
+    app: tempconv-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: tempconv-backend
+  ports:
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+      protocol: TCP
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
