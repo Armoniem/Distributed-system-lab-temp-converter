@@ -6,10 +6,10 @@ on:
     tags: ["v*"]
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: ${{ secrets.GCP_REGION }}
-  CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
-  REGISTRY: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tempconv
+  PROJECT_ID: temp-convertor-485913
+  REGION: europe-west1
+  CLUSTER_NAME: tempconv-cluster
+  REGISTRY: europe-west1-docker.pkg.dev/temp-convertor-485913/tempconv
 
 jobs:
   deploy:
@@ -80,7 +80,7 @@ jobs:
 
       - name: Smoke test
         run: |
-          INGRESS_IP=$(kubectl get ingress tempconv-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          curl -sf -X POST http://${INGRESS_IP}/tempconv.TempConverter/CelsiusToFahrenheit \
+          BACKEND_IP=$(kubectl get svc tempconv-backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          curl -sf -X POST http://${BACKEND_IP}:8080/tempconv.TempConverter/CelsiusToFahrenheit \
             -H 'Content-Type: application/json' \
-            -d '{"value": 100}' | jq .
+            -d '{"value": 100}' | python3 -m json.tool
