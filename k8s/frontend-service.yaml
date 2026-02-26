@@ -5,8 +5,10 @@ metadata:
   namespace: default
   labels:
     app: tempconv-frontend
+  annotations:
+    cloud.google.com/load-balancer-type: "External"
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: tempconv-frontend
   ports:

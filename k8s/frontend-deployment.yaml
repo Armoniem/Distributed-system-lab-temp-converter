@@ -7,7 +7,7 @@ metadata:
     app: tempconv-frontend
     version: "1.0.0"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: tempconv-frontend
@@ -22,12 +22,9 @@ spec:
         app: tempconv-frontend
         version: "1.0.0"
     spec:
-      nodeSelector:
-        kubernetes.io/arch: amd64
       containers:
         - name: frontend
-          # Replace with your actual Artifact Registry path
-          image: REGION-docker.pkg.dev/PROJECT_ID/tempconv/frontend:latest
+          image: europe-west1-docker.pkg.dev/temp-convertor-485913/tempconv/frontend:latest
           imagePullPolicy: Always
           ports:
             - name: http
@@ -35,22 +32,22 @@ spec:
               protocol: TCP
           resources:
             requests:
-              cpu: "50m"
-              memory: "32Mi"
+              cpu: "100m"
+              memory: "128Mi"
             limits:
               cpu: "200m"
-              memory: "128Mi"
+              memory: "256Mi"
           livenessProbe:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: 3
+            initialDelaySeconds: 5
             periodSeconds: 10
           securityContext:
             allowPrivilegeEscalation: false

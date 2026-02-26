@@ -5,16 +5,19 @@ metadata:
   namespace: default
   labels:
     app: tempconv-backend
+  annotations:
+    # Cloud Load Balancer - external TCP load balancer
+    cloud.google.com/load-balancer-type: "External"
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: tempconv-backend
   ports:
-    - name: grpc
-      port: 50051
-      targetPort: 50051
-      protocol: TCP
     - name: http
       port: 8080
       targetPort: 8080
+      protocol: TCP
+    - name: grpc
+      port: 50051
+      targetPort: 50051
       protocol: TCP
