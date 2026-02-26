@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -57,7 +56,15 @@ func main() {
 	}
 
 	// CORS middleware — needed by the Flutter web frontend
-	httpHandler := corsMiddleware(mux)
+	// Wrap with healthz and CORS before passing to HTTP server
+	httpMux := http.NewServeMux()
+	httpMux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
+	})
+	httpMux.Handle("/", mux)
+	httpHandler := corsMiddleware(httpMux)
 
 	httpSrv := &http.Server{
 		Addr:         ":" + httpPort,
@@ -108,6 +115,5 @@ func getEnv(key, fallback string) string {
 	if v, ok := os.LookupEnv(key); ok {
 		return v
 	}
-	_ = fmt.Sprintf // suppress unused import if fmt is only used here
 	return fallback
 }
